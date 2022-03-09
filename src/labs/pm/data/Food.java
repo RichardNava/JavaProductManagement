@@ -3,11 +3,11 @@ package labs.pm.data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class Food extends Product{
+public final class Food extends Product{
 	//FIELDS
 	private LocalDate bestBefore;
 	//CONSTRUCTORES
-	public Food(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore) {
+	Food(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore) {
 		super(id, name, price, rating);
 		this.bestBefore = bestBefore;
 	}
@@ -16,15 +16,22 @@ public class Food extends Product{
 		return bestBefore;
 	}
 	
+	/*
 	//toString()
 	@Override
 	public String toString() {
-		return super.toString() +", "+ bestBefore;
-	}
+		return super.toString();
+	}*/
+	
 	//METODOS SOBREESCRITOS
 	@Override
 	public BigDecimal getDiscount() {
 		return (bestBefore.isEqual(LocalDate.now())) ? super.getDiscount() : BigDecimal.ZERO;
+	}
+
+	@Override
+	public Product applyRating(Rating newRating) {
+		return new Food(getId(),getName(),getPrice(),newRating,bestBefore);
 	}
 	
 	
