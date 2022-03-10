@@ -2,9 +2,7 @@ package labs.pm.app;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import labs.pm.data.Drink;
-import labs.pm.data.Food;
+import java.util.Locale;
 import labs.pm.data.Product;
 import labs.pm.data.ProductManager;
 import labs.pm.data.Rating;
@@ -12,40 +10,38 @@ import labs.pm.data.Rating;
 public class Shop {
 
 	public static void main(String[] args) {
-		ProductManager pm = new ProductManager();
+		ProductManager pm = new ProductManager(Locale.FRANCE);
 		
 		Product p1 = pm.createProduct(101,"Tea",BigDecimal.valueOf(1.75),Rating.THREE_STAR);
+		p1 = pm.reviewProduct(p1, Rating.FOUR_STAR, "Nice hot cup of tea");
+		p1 = pm.reviewProduct(p1, Rating.TWO_STAR, "Rather weak tea");
+		p1 = pm.reviewProduct(p1, Rating.FOUR_STAR, "Fine tea");
+		p1 = pm.reviewProduct(p1, Rating.FIVE_STAR, "Perfect tea");
+		p1 = pm.reviewProduct(p1, Rating.THREE_STAR, "Just add some lemon");
+		p1 = pm.reviewProduct(p1, Rating.THREE_STAR, "Good tea");
+		pm.printProductReport(p1);
+		
 		Product p2 = pm.createProduct(102,"Coffe",BigDecimal.valueOf(1.99),Rating.FOUR_STAR);
+		p2 = pm.reviewProduct(p2, Rating.THREE_STAR, "Coffe was ok");
+		p2 = pm.reviewProduct(p2, Rating.ONE_STAR, "Where is the milk?");
+		p2 = pm.reviewProduct(p2, Rating.FIVE_STAR, "It´s perfect with ten spoons of sugar!");
+		pm.printProductReport(p2);
+		
 		Product p3 = pm.createProduct(103,"Cake",BigDecimal.valueOf(3.99),Rating.FIVE_STAR,LocalDate.now().plusDays(2));
+		p3 = pm.reviewProduct(p3, Rating.FOUR_STAR, "Very nice cake");
+		p3 = pm.reviewProduct(p3, Rating.THREE_STAR, "It good, but I´ve expected more chocolate");
+		p3 = pm.reviewProduct(p3, Rating.FIVE_STAR, "Perfect");
+		p3 = pm.reviewProduct(p3, Rating.FIVE_STAR, "Awesome");
+		pm.printProductReport(p3);
+		
 		Product p4 = pm.createProduct(105,"Cookie",BigDecimal.valueOf(2.99),Rating.TWO_STAR,LocalDate.now().plusDays(1));
-		Product p6 = pm.createProduct(104,"Chocolate", BigDecimal.valueOf(2.99),Rating.FIVE_STAR);
-		Product p7 = pm.createProduct(104,"Chocolate", BigDecimal.valueOf(2.99),Rating.FIVE_STAR,LocalDate.now().plusDays(2));
-		Product p5 = p3.applyRating(Rating.THREE_STAR);
-		Product p8 = p4.applyRating(Rating.FIVE_STAR);
-		Product p9 = p1.applyRating(Rating.TWO_STAR);
+		p4 = pm.reviewProduct(p4, Rating.FIVE_STAR, "Yummie");
+		p4 = pm.reviewProduct(p4, Rating.THREE_STAR, "Ok");
+		pm.printProductReport(p4);
 		
-		System.out.println(p1);
-		System.out.println(p2);
-		System.out.println(p3);
-		System.out.println(p4);
-		System.out.println(p5);
-		System.out.println(p6.equals(p7));
-		System.out.println(p8);
-		System.out.println(p9);
-		
-		if (p3 instanceof Food) {
-			System.out.println(((Food)p3).getBestBefore());
-		}
-		System.out.println(doubleChar("String"));
+		Product p5 = pm.createProduct(104,"Chocolate", BigDecimal.valueOf(2.65),Rating.FIVE_STAR);
+		pm.printProductReport(p5);
 		
 	}
-	public static String doubleChar(String s) {
-		String st = "";
-		var a = s.toCharArray();
-		for (int i = 0; i < a.length; i++) {
-			st += (char)a[i];
-			st += (char)a[i];
-		}
-		return st;
-	}
+
 }
