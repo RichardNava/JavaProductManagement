@@ -1,11 +1,18 @@
 package labs.pm.data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.Iterator;
+import java.util.List;
 
-public abstract class Product implements Rateable<Product>{
+public abstract class Product implements Rateable<Product>, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4311181704678630096L;
 	// FIELDS
 	private final int id;
 	private final String name;
@@ -87,7 +94,7 @@ public abstract class Product implements Rateable<Product>{
 		if (this==obj) return true;
 		if (obj instanceof Product) {
 			final Product other = (Product)obj;
-			return (this.id == other.id) && (Objects.equals(this.name, other.name));
+			return (this.id == other.id);  // && (Objects.equals(this.name, other.name));
 		}
 		return false;
 	}

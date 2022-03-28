@@ -4,7 +4,7 @@ package labs.pm.data;
 public interface Rateable<T> {
 	public static final Rating DEFAULT_RATING = Rating.NOT_RATED;
 	
-	public abstract T applyRating(Rating rating);
+	public abstract T applyRating(Rating rating); 
 	
 	public default Rating getRating() {
 		return DEFAULT_RATING;

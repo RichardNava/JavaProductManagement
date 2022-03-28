@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public final class Food extends Product{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2012587646685790465L;
 	//FIELDS
 	private LocalDate bestBefore;
 	//CONSTRUCTORES

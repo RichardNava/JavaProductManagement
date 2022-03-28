@@ -1,6 +1,12 @@
 package labs.pm.data;
 
-public class Review implements Comparable<Review> {
+import java.io.Serializable;
+
+public class Review implements Comparable<Review>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Rating rating;
 	private String comments;
 	
@@ -26,15 +32,13 @@ public class Review implements Comparable<Review> {
 	@Override
 	public int compareTo(Review o) { 
 		return o.rating.ordinal() - this.rating.ordinal(); // Criterio que permite ordenar de mayor a menor
-		
-		//----------> {3,2,1}
+
+		//----------> {3,2,1} // Algoritmo burbuja
 		// vuelta 1.1// 2,3,1 -> Se mete en el if
 		// vuelta 1.2// 2,1,3 -> Se mete en el if
 		// vuelta 2.1// 1,2,3 -> Se mete en el if
 		// vuelta 2.2// 1,2,3 -> No se mete en el if
 	}
-	
-	
 	
 	
 }

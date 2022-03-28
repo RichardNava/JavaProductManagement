@@ -5,6 +5,12 @@ import java.time.LocalTime;
 
 public final class Drink extends Product{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	Drink(int id, String name, BigDecimal price, Rating rating) {
 		super(id, name, price, rating);
 	}
@@ -12,10 +18,9 @@ public final class Drink extends Product{
 	@Override
 	public BigDecimal getDiscount() {
 		LocalTime now = LocalTime.now();
-		return (now.isAfter(LocalTime.of(17,30)) && now.isBefore(LocalTime.of(18, 30))) ? 
+		return (now.isAfter(LocalTime.of(11,00)) && now.isBefore(LocalTime.of(12,00))) ? 
 				super.getDiscount() : BigDecimal.ZERO; 
 	}
-
 
 	@Override
 	public Product applyRating(Rating newRating) {
