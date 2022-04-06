@@ -1,10 +1,25 @@
 package labs.pm.app;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.opencsv.CSVReader;
+
 import labs.pm.data.Product;
 import labs.pm.data.ProductManager;
 import labs.pm.data.ProductManagerException;
@@ -15,12 +30,59 @@ import labs.pm.data.Review;
 @SuppressWarnings("unused")
 public class Shop {
 
-	public static void main(String[] args) {
+	public static void main(String[] args){ //Throws -> propagar Throw -> Arrojar
+
+		ProductManager pm = ProductManager.getInstance();			
+		AtomicInteger clientCount = new AtomicInteger(0); 
+		Callable<String> client = () -> {
+			String clientId = "Client "+clientCount.incrementAndGet();
+			String threadName = Thread.currentThread().getName();
+			int productId = ThreadLocalRandom.current().nextInt(9)+101;
+			String languageTag = ProductManager.getSupportedLocales()
+											   .stream()
+											   .skip(ThreadLocalRandom.current().nextInt(5))
+											   .findFirst().get();
+			StringBuilder log = new StringBuilder(); 
+			log.append(clientId+" "+threadName+"\n-\tstart of log\t-\n");
+			log.append(pm.getDiscounts(languageTag)
+					     .entrySet()
+					     .stream()
+					     .map(entry-> entry.getKey()+"\t"+entry.getValue())
+					     .collect(Collectors.joining("\n")));
+			Product product = pm.reviewProduct(productId, Rating.FOUR_STAR, "Yet Another Review");
+			log.append((product != null)
+					? "\nProduct "+productId+" reviewed\n"
+					: "\nProduct "+productId+" not reviewed\n");
+			log.append("\n-\tend of log\t-\n");
+			return log.toString();
+		};
+		List<Callable<String>> clients = Stream.generate(()->client)
+											   .limit(5)
+											   .collect(Collectors.toList());
+		ExecutorService executorService = Executors.newFixedThreadPool(3);
+		try {
+			List<Future<String>> results = executorService.invokeAll(clients);
+			executorService.shutdown();
+			results.stream().forEach(result -> {
+				try {
+					System.out.println(result.get());
+				} catch (InterruptedException | ExecutionException e) {
+					System.out.println(e.getClass().getName()+" "+e.getCause());
+				}
+			}
+			);
+		} catch (InterruptedException e) {
+			System.out.println(e.getClass().getName()+" "+e.getCause());
+		}
 		
-		ProductManager pm = new ProductManager("es_ES");
-		pm.printProductReport(101);
-		pm.printProductReport(103);
-		/*
+		
+		//pm.printProductReport(101,"es_ES");
+		//pm.printProductReport(103,"fr_FR");
+		//pm.createCSV(new String[] {"F","104","Cookie","1.99","0","2022-03-30"});
+		//pm.createCSV(new String[] {"D","105","Coffe","2.5","0","2022-03-28"});
+		//pm.createCSV(new String[] {"D","106","Chocolate","1.75","0","2022-03-28"});
+		//pm.createCSV("D 106 Chocolate 1.75 0 2022-03-28");
+		/* 
 		Product p1 = pm.createProduct(101,"Tea",BigDecimal.valueOf(1.75),Rating.THREE_STAR);
 
 		p1 = pm.reviewProduct(101, Rateable.convert(5), "Rather weak tea");
@@ -107,7 +169,6 @@ public class Shop {
 		System.out.println("\n");
 		pm.getDiscounts().forEach((rating,discount) -> System.out.println(rating+"\t"+discount));
 		p2 = pm.reviewProduct(234, Rating.ONE_STAR, "Prueba");
-	*/	
 		pm.createProduct(164,"Kombucha", BigDecimal.valueOf(2.10), Rating.NOT_RATED);
 		pm.reviewProduct(164,Rating.TWO_STAR, "Looks like tea but is it?");
 		pm.reviewProduct(164,Rating.THREE_STAR, "Fine tea");
@@ -117,10 +178,11 @@ public class Shop {
 		pm.dumpData();
 		pm.restoreData();
 		
-		pm.printProductReport(164);
-		pm.printProducts((Product p) -> p.getPrice().floatValue()>2,
-				(pm1,pm2) -> pm2.getRating().ordinal() - pm1.getRating().ordinal());
-		pm.getDiscounts().forEach((rating,discount) -> System.out.println(rating+"\t"+discount));
+		pm.printProductReport(164,"es_ES");
+		pm.printProducts((Product p) -> p.getPrice().floatValue()>1,
+				(pm1,pm2) -> pm2.getRating().ordinal() - pm1.getRating().ordinal(),"es_ES");
+		pm.getDiscounts("es_ES").forEach((rating,discount) -> System.out.println(rating+"\t"+discount));
+ */	
 		
 	}
 
